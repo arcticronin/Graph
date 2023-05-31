@@ -57,6 +57,9 @@ public:
 
   // try catch
   _vertices = new value_type[sz];
+  //for (int i = 0; i < _size; ++i){
+  //  _vertices[i] = 0;
+  //}
   // end try
   
   _size = sz;
@@ -133,7 +136,9 @@ public:
   for (int i = 0; i < _size; ++i) {
             delete[] _adjacencyMatrix[i];
         }
+  delete[] _adjacencyMatrix;
   delete[] _vertices;
+  _adjacencyMatrix = nullptr;
   _vertices = nullptr;
   _size = 0;
 
@@ -340,6 +345,7 @@ public:
   void swap(amgraph &other) {
     std::swap(_vertices, other._vertices);
     std::swap(_size, other._size); 
+    std::swap(_adjacencyMatrix, other._adjacencyMatrix);
   }
 
   /**
