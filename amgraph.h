@@ -762,17 +762,19 @@ public:
   bool hasEdge(int src, int dest) {
       return _adjacencyMatrix[src][dest];
   }
-
+/* remove
   void setVertexName(int vert, const T& name) {
       _vertices[vert] = name;
   }
-
+*/
   T getVertexName(int vert) {
       return _vertices[vert];
   }
 
 
   void print() {
+          if (_size == 0)
+            std::cout << "Empty Graph" << std::endl;
           for (int i = 0; i < _size; ++i) {
               std::cout << "Vertex " << getVertexName(i) << ": ";
               for (int j = 0; j < _size; ++j) {

@@ -232,12 +232,14 @@ struct utente
 int main(int argc, char *argv[])
 {
 
+  amgraph<int> amg1;
+  amg1.print();
 
   // Test con amgraph su interi: amgraph<int>
   //test_fondamentali_int();
   // ricordarsi inizializzare col cazzo di alore zero
 
-  test_amgraph_int();
+  //test_amgraph_int();
 
   // test_amgraph_const_int();
 
