@@ -55,7 +55,10 @@ void test_fondamentali_int()
   assert(db1.size() == db3.size());
   for (unsigned int i = 0; i < db1.size(); i++)
     assert(db3[i] == db1[i]);
+  std::cout<< "prova stampa nome secondo vertice : " << db1[1]<<std::endl;
   }
+
+
 /**
   test dei metodi d'uso per un amgraph<int> non const
 */
@@ -64,18 +67,21 @@ void test_amgraph_int()
   std::cout << "*** TEST METODI amgraph<int> ***" << std::endl;
 
   amgraph<int> db(5, 0);
-
+  db.print();
   std::cout << "test value" << std::endl;
   db.value(1) = 100;
   assert(db.value(1) == 100);
+  db.print();
 
   std::cout << "test set_value" << std::endl;
   db.set_value(0, 99);
   assert(db.value(0) == 99);
+  db.print();
 
   std::cout << "test scrittura op[]" << std::endl;
   db[3] = 5;
   assert(db[3] == 5);
+  db.print();
 
   // Se compilazione in modalita' debug da' errore
   // db[100] = 5;
@@ -83,6 +89,7 @@ void test_amgraph_int()
   std::cout << "test lettura op[]" << std::endl;
   int a = db[3];
   assert(a == 5);
+  db.print();
 
   // Se compilazione in modalita' debug da' errore
   // int tmp = db[8];

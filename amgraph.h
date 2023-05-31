@@ -215,6 +215,7 @@ public:
   return *this;
 }
 
+// ?? lo devo fare?
 
   /**
     @brief Accesso alla dimensione dell'array (stile C++)
@@ -361,11 +362,16 @@ public:
   */
   // Diamo accesso alla funzione globale, esterna alla classe, alle
   // parti private della classe
-  friend std::ostream& operator<<(std::ostream &os, const amgraph<T> &db) {
-    os << db._size << ' ';
-    for(typename amgraph<T>::size_type i = 0; i < db.size() ; i++)
-      os << db[i] << ' ';
-  
+  friend std::ostream& operator<<(std::ostream &os, const amgraph<T> &amg) {
+    os << "size " << amg._size << " node names:"<< std::endl;
+    for(typename amgraph<T>::size_type i = 0; i < amg.size() ; i++)
+      os << amg[i] << ' ';
+    os << std::endl << "Adjacency Matrix:" << std::endl;
+    for (int i = 0; i < amg._size; ++i) {
+      for (int j = 0; j < amg._size; ++j)
+        os << amg._adjacencyMatrix[i][j] << " ";
+      os << std::endl;
+    }
     return os;
   }
 
