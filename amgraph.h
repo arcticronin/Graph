@@ -87,10 +87,19 @@ public:
     @post _vertices != nullptr
     @post _size = sz 
   */
-  amgraph(size_type sz, const value_type &value) : _vertices(nullptr), _size(0) {
+  amgraph(size_type sz, const value_type &value) : _vertices(nullptr), _size(0), _adjacencyMatrix(nullptr) {
 
   _vertices = new value_type[sz];
   _size = sz;
+  
+  _adjacencyMatrix = new bool*[_size];
+  for (int i = 0; i < _size; ++i) {
+            _adjacencyMatrix[i] = new bool[_size];
+            for (int j = 0; j < _size; ++j) {
+                _adjacencyMatrix[i][j] = false;
+            }
+        }
+
 
   try {
     for(unsigned int i=0; i<_size; ++i)
@@ -100,6 +109,8 @@ public:
     delete[] _vertices;
     _vertices = nullptr;
     _size =0;
+    
+    //todo remove adjacencymatrix
 
     throw; // rilancio dell'eccezione !!
   }
@@ -143,12 +154,13 @@ public:
     @post _vertices != nullptr
     @post _size = other._size
   */
-  amgraph(const amgraph &other) : _vertices(nullptr), _size(0) {
+  amgraph(const amgraph &other) : _vertices(nullptr), _size(0), _adjacencyMatrix(nullptr) {
   _vertices = new value_type[other._size];
   _size = other._size;
   try {
     for(size_type i=0; i<_size; ++i)
       _vertices[i] = other._vertices[i];
+
   }
   catch(...) {
     delete[] _vertices;
@@ -156,6 +168,13 @@ public:
     _size =0;
     throw;
   }
+  _adjacencyMatrix = new bool*[_size];
+  for (int i = 0; i < _size; ++i) {
+            _adjacencyMatrix[i] = new bool[_size];
+            for (int j = 0; j < _size; ++j) {
+                _adjacencyMatrix[i][j] = other._adjacencyMatrix[i][j];
+            }
+        }
   #ifndef NDEBUG
   std::cout << "amgraph::amgraph(const amgraph&)"<< std::endl;
   #endif

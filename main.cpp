@@ -235,13 +235,36 @@ int main(int argc, char *argv[]) {
   db2.print();
 
   std::cout << "test ctor secondario 2" << std::endl;
-  amgraph<int> db3(5,-1);
-  db3.print();
+  amgraph<int> db3(5, 7);
+
   assert(db3.size() == 5);
   for(unsigned int i =0; i < 5; i++)
-    assert(db3.getVertexName(i) == -1);
+    assert(db3.getVertexName(i) == 7);
 
   db3.print();
+  
+
+  std::cout << "adding true in 1:1 "<<std::endl;
+  db3.addEdge(1,1);
+  db3.print();
+
+  std::cout << "test copy constructor" << std::endl;
+  amgraph<int> db4(db3);
+  // ATTENZIONE: una sintassi del tipo
+  //             amgraph<int> db4 = db3;
+  //             EQUIVALE ALLA CHIAMATA AL COPY CONSTRUCTOR!
+  db4.print();
+  assert(db4.size() == db3.size());
+  
+  for(unsigned int i =0 ; 
+    i < db4.size(); i++)
+    assert(db3[i] == db4[i]);
+
+  std::cout << "test operatore assegnamento =" << std::endl;
+  db1 = db3;
+  assert(db1.size() == db3.size());
+  for(unsigned int i =0 ; i < db1.size(); i++)
+    assert(db3[i] == db1[i]);
 
   // Test con amgraph su interi: amgraph<int> 
   //test_fondamentali_int();
