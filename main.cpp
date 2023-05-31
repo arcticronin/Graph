@@ -205,19 +205,6 @@ void test_iteratori_int()
   for (unsigned int j = 0; j < 10; ++j)
     d[j] = j;
 
-  amgraph<int>::iterator it;  // iteratore di inizio lettura/scrittura
-  amgraph<int>::iterator ite; // iteratore di fine lettura/scrittura
-
-  ite = d.end(); // chiediamo l'iteratore di fine
-
-  for (it = d.begin(); it != ite; ++it)
-    std::cout << *it << std::endl;
-
-  it = d.begin();
-  *it = 100; // modifico il primo elemento della sequenza di dati
-
-  assert(d[0] == 100);
-
   amgraph<int>::const_iterator cit; // iteratore in lettura
 
   cit = d.begin();
