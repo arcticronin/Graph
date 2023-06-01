@@ -527,7 +527,6 @@ public:
   const_iterator end() const {
     return const_iterator(_vertices + _size);
   }
-
   void addNode(const value_type &node){
     // check if node is present
     // use get vertex index
@@ -576,6 +575,73 @@ public:
     _size += 1;
     }
 
+  void removeNode(const value_type &node){
+    // check if node is present
+    // use get vertex index
+    int index = this->getVertexIndex(node);
+      if ( index == -1){
+        std::cout<< "node " << node <<" not present" << std::endl;
+        return;
+        }
+
+    // try catch
+
+    value_type* new_vertices = new value_type[_size - 1];
+
+    // copy vertices
+    for (int i = 0; i < index ; ++i) {
+      new_vertices[i] = _vertices[i];
+      }
+    for (int i = index; i < _size - 1 ; ++i) {
+      new_vertices[i] = _vertices[i + 1];
+      }
+
+    // handle matrix
+
+    bool** new_adjacencyMatrix = new bool*[_size - 1];
+    
+    for (int i = 0; i < _size - 1 ; ++i) {
+      new_adjacencyMatrix[i] = new bool[_size - 1];
+      }
+
+    // copy first block
+    for (int i = 0; i < index; ++i) {
+      for (int j = 0; j < index; ++j)
+          new_adjacencyMatrix[i][j] = _adjacencyMatrix[i][j];
+      }
+
+     // copy fourth block
+    for (int i = index; i < _size - 1; ++i) {
+      for (int j = index; j < _size - 1; ++j)
+          new_adjacencyMatrix[i][j] = _adjacencyMatrix[i + 1][j + 1];
+      }
+
+    // copy second block
+    for (int i = 0; i < index; ++i) {
+      for (int j = index; j < _size - 1; ++j)
+          new_adjacencyMatrix[i][j] = _adjacencyMatrix[i][j + 1];
+      }
+
+     // copy third block
+    for (int i = index; i < _size - 1; ++i) {
+      for (int j = 0; j < index; ++j)
+          new_adjacencyMatrix[i][j] = _adjacencyMatrix[i + 1][j];
+      }
+     
+
+    // clean temp data
+    std::swap(_vertices, new_vertices);
+    delete[] new_vertices;
+    std::swap(_adjacencyMatrix, new_adjacencyMatrix);
+    for (int i = 0; i < _size; ++i) {
+          delete[] new_adjacencyMatrix[i];
+      }
+    delete[] new_adjacencyMatrix;
+    
+    // size--
+    _size -= 1;
+    }
+ 
   void addEdge(int src, int dest) {
       _adjacencyMatrix[src][dest] = true;
       _adjacencyMatrix[dest][src] = true;
@@ -586,22 +652,22 @@ public:
       _adjacencyMatrix[dest][src] = false;
   }
 
-  bool hasEdge(int src, int dest) {
+  bool hasEdge(int src, int dest) const{
       return _adjacencyMatrix[src][dest];
   }
 
-  T getVertexName(int vert) {
+  T getVertexName(int vert) const{
       return _vertices[vert];
   }
 
-  int getVertexIndex(const value_type &node){
+  int getVertexIndex(const value_type &node) const{
     for(int i = 0; i < _size; ++i)
       if (node == _vertices[i])
         return i;
     return -1;
   }
 
-  void print() {
+  void print() const{
           if (_size == 0)
             std::cout << "Empty Graph" << std::endl;
           for (int i = 0; i < _size; ++i) {
@@ -613,7 +679,7 @@ public:
           }
       }
 
-  size_type getSize(){
+  size_type getSize() const{
     return _size;
   }
 
