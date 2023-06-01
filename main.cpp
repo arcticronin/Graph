@@ -249,6 +249,7 @@ int main(int argc, char *argv[])
   assert(amg1.connected(1,2));
   assert(!amg1.connected(3,2));
   
+  std::cout << std::endl << "cout  = "  << std::endl << amg1 << std::endl;
   // Test con amgraph su interi: amgraph<int>
   //test_fondamentali_int();
   // ricordarsi inizializzare col cazzo di alore zero

@@ -670,6 +670,14 @@ public:
     this->removeEdge(index1, index2);
   }
 
+  template<typename Iter>
+    void add_Nodes(Iter start, Iter end) {
+        while (start != end) {
+            add_Node(*start);
+            ++start;
+        }
+    }
+
   void addEdge(int src, int dest) {
       _adjacencyMatrix[src][dest] = true;
   }
