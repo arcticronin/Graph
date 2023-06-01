@@ -528,226 +528,54 @@ public:
     return const_iterator(_vertices + _size);
   }
 
-/*
-  
-  // Implementazione di un forward iterator (a scopo didattico)
-  // fatta a lezione
+  void addNode(const value_type &node){
+    // check if node is present
+    for(int i = 0; i < _size; ++i){
+      if (node == _vertices[i]){
+        std::cout<< "node already present" << std::endl;
+        return;
+        }
+      }
+    // try catch
 
-  class const_iterator; // forward declaration
+    value_type* new_vertices = new value_type[_size + 1];
+    // copy vertices
+    for (int i = 0; i < _size ; ++i) {
+      new_vertices[i] = _vertices[i];
+      }
+    new_vertices[_size] = node;
 
-  class iterator {
-    //  
-  public:
-    typedef std::forward_iterator_tag iterator_category;
-    typedef T                         value_type;
-    typedef ptrdiff_t                 difference_type;
-    typedef T*                        pointer;
-    typedef T&                        reference;
+    // handle matrix
 
-  
-    iterator() {
-      ptr = nullptr;
-    }
+    bool** new_adjacencyMatrix = new bool*[_size + 1];
     
-    iterator(const iterator &other) {
-      ptr = other.ptr;
-    }
+    for (int i = 0; i < _size + 1 ; ++i) {
+      new_adjacencyMatrix[i] = new bool[_size + 1];
+      }
 
-    iterator& operator=(const iterator &other) {
-      ptr = other.ptr;
-      return *this;
-    }
+    // copy old block
+    for (int i = 0; i < _size; ++i) {
+      for (int j = 0; j < _size; ++j)
+          new_adjacencyMatrix[i][j] = _adjacencyMatrix[i][j];
+      }
+    // fill last row and last column with "false"
+    for (int i = 0; i < _size + 1; ++i) {
+      new_adjacencyMatrix[_size][i] = false;
+      new_adjacencyMatrix[i][_size] = false;
+      }
 
-    ~iterator() { }
-
-    // Ritorna il dato riferito dall'iteratore (dereferenziamento)
-    reference operator*() const {
-      return *ptr;
-    }
-
-    // Ritorna il puntatore al dato riferito dall'iteratore
-    pointer operator->() const {
-      return ptr;
-    }
-
-    // Operatore di iterazione post-incremento
-    iterator operator++(int) {
-      iterator tmp(ptr);
-      ++ptr;
-      return tmp;
-    }
-
-    // Operatore di iterazione pre-incremento
-    iterator& operator++() {
-      ++ptr;
-      return *this;
-    }
-
-    // Uguaglianza
-    bool operator==(const iterator &other) const {
-      return ptr == other.ptr;
-    }
-
-    // Diversita'
-    bool operator!=(const iterator &other) const {
-      return ptr != other.ptr;
-    }
+    // clean temp data
+    std::swap(_vertices, new_vertices);
+    delete[] new_vertices;
+    std::swap(_adjacencyMatrix, new_adjacencyMatrix);
+    for (int i = 0; i < _size; ++i) {
+          delete[] new_adjacencyMatrix[i];
+      }
+    delete[] new_adjacencyMatrix;
     
-    // Solo se serve anche const_iterator aggiungere le seguenti definizioni
-    friend class const_iterator;
-
-    // Uguaglianza
-    bool operator==(const const_iterator &other) const {
-      return ptr == other.ptr;
+    // size++
+    _size += 1;
     }
-
-    // Diversita'
-    bool operator!=(const const_iterator &other) const {
-      return ptr != other.ptr;
-    }
-
-    // Solo se serve anche const_iterator aggiungere le precedenti definizioni
-
-  private:
-    value_type *ptr;
-
-    // La classe container deve essere messa friend dell'iteratore per poter
-    // usare il costruttore di inizializzazione.
-    friend class amgraph; // !!! Da cambiare il nome!
-
-    // Costruttore privato di inizializzazione usato dalla classe container
-    // tipicamente nei metodi begin e end
-    explicit iterator(T* p) { 
-       ptr = p;
-    }
-        
-  }; // classe iterator
-  
-  // Ritorna l'iteratore all'inizio della sequenza dati
-  iterator begin() {
-    return iterator(_vertices);
-  }
-  
-  // Ritorna l'iteratore alla fine della sequenza dati
-  iterator end() {
-    return iterator(_vertices + _size);
-  }
-  
-  
-  
-  class const_iterator {
-    //  
-  public:
-    typedef std::forward_iterator_tag iterator_category;
-    typedef T                         value_type;
-    typedef ptrdiff_t                 difference_type;
-    typedef const T*                  pointer;
-    typedef const T&                  reference;
-
-  
-    const_iterator() {
-      ptr = nullptr;
-    }
-    
-    const_iterator(const const_iterator &other) {
-      ptr = other.ptr;
-    }
-
-    const_iterator& operator=(const const_iterator &other) {
-      ptr = other.ptr;
-    }
-
-    ~const_iterator() {
-      
-    }
-
-    // Ritorna il dato riferito dall'iteratore (dereferenziamento)
-    reference operator*() const {
-      return *ptr;
-    }
-
-    // Ritorna il puntatore al dato riferito dall'iteratore
-    pointer operator->() const {
-      return ptr;
-    }
-    
-    // Operatore di iterazione post-incremento
-    const_iterator operator++(int) {
-      const_iterator tmp(ptr);
-      ++ptr;
-      return tmp;
-    }
-
-    // Operatore di iterazione pre-incremento
-    const_iterator& operator++() {
-      ++ptr;
-      return *this;
-    }
-
-    // Uguaglianza
-    bool operator==(const const_iterator &other) const {
-      return ptr == other.ptr;
-    }
-    
-    // Diversita'
-    bool operator!=(const const_iterator &other) const {
-      return ptr != other.ptr;
-    }
-
-    // Solo se serve anche iterator aggiungere le seguenti definizioni
-    
-    friend class iterator;
-
-    // Uguaglianza
-    bool operator==(const iterator &other) const {
-      return ptr == other.ptr;
-    }
-
-    // Diversita'
-    bool operator!=(const iterator &other) const {
-      return ptr != other.ptr;
-    }
-
-    // Costruttore di conversione iterator -> const_iterator
-    const_iterator(const iterator &other) {
-      ptr = other.ptr;
-    }
-
-    // Assegnamento di un iterator ad un const_iterator
-    const_iterator &operator=(const iterator &other) {
-      ptr = other.ptr;
-      return *this;
-    }
-
-    // Solo se serve anche iterator aggiungere le precedenti definizioni
-
-  private:
-    const T *ptr;
-
-    // La classe container deve essere messa friend dell'iteratore per poter
-    // usare il costruttore di inizializzazione.
-    friend class amgraph; // !!! Da cambiare il nome!
-
-    // Costruttore privato di inizializzazione usato dalla classe container
-    // tipicamente nei metodi begin e end
-    const_iterator(const T *p) { 
-      ptr = p; 
-    }
-    
-    // !!! Eventuali altri metodi privati
-    
-  }; // classe const_iterator
-  
-  // Ritorna l'iteratore all'inizio della sequenza dati
-  const_iterator begin() const {
-    return const_iterator(_vertices);
-  }
-  
-  // Ritorna l'iteratore alla fine della sequenza dati
-  const_iterator end() const {
-    return const_iterator(_vertices + _size);
-  }
-*/
 
   void addEdge(int src, int dest) {
       _adjacencyMatrix[src][dest] = true;
@@ -784,17 +612,15 @@ public:
           }
       }
 
+  size_type getSize(){
+    return _size;
+  }
+
 private:
 
-  value_type *_vertices; ///< Puntatore all'array di interi
+  value_type *_vertices; ///< Puntatore all'array
   size_type _size; ///< Dimensione dell'array
   bool** _adjacencyMatrix;
 
 };
-
-
-
-
-
-
 #endif

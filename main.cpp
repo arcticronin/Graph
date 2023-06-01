@@ -230,11 +230,20 @@ struct utente
 };
 
 int main(int argc, char *argv[])
-{
-
+{ 
   amgraph<int> amg1;
   amg1.print();
-
+  std::cout << "dime = "  << amg1.getSize() << std::endl;
+  amg1.addNode(1);
+  amg1.addNode(2);
+  amg1.addNode(4);
+  amg1.addNode(6);
+  amg1.addNode(7);
+  amg1.addNode(10);
+  amg1.print();
+  std::cout << "dime = "  << amg1.getSize() << std::endl;
+  
+  
   // Test con amgraph su interi: amgraph<int>
   //test_fondamentali_int();
   // ricordarsi inizializzare col cazzo di alore zero
