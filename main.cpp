@@ -233,16 +233,18 @@ int main(int argc, char *argv[])
 { 
   amgraph<int> amg1;
   amg1.print();
-  amg1.addNode(1);
-  amg1.addNode(2);
-  amg1.addNode(4);
-  amg1.addNode(5);
-  amg1.addNode(7);
+  amg1.add_Node(1);
+  amg1.add_Node(2);
+  amg1.add_Node(3);
+  amg1.add_Arc(1,1);
+  amg1.add_Arc(2,1);
+  amg1.add_Arc(1,3);
+  amg1.add_Arc(3,3);
   amg1.print();
-  int r = 1;
+  int r = 2;
   std::cout << std::endl << "Removing  = "  << r << std::endl;
   std::cout << std::endl << "Index  = "  << amg1.getVertexIndex(r) << std::endl;
-  amg1.removeNode(r);
+  amg1.remove_Node(r);
   amg1.print();
   
   // Test con amgraph su interi: amgraph<int>

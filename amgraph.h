@@ -527,7 +527,7 @@ public:
   const_iterator end() const {
     return const_iterator(_vertices + _size);
   }
-  void addNode(const value_type &node){
+  void add_Node(const value_type &node){
     // check if node is present
     // use get vertex index
       if ( this->getVertexIndex(node) != -1){
@@ -575,7 +575,7 @@ public:
     _size += 1;
     }
 
-  void removeNode(const value_type &node){
+  void remove_Node(const value_type &node){
     // check if node is present
     // use get vertex index
     int index = this->getVertexIndex(node);
@@ -641,15 +641,41 @@ public:
     // size--
     _size -= 1;
     }
- 
+
+  void add_Arc(const value_type &node1, const value_type &node2){
+    int index1 = this->getVertexIndex(node1);
+    int index2 = this->getVertexIndex(node2);
+    if (index1 == -1 || index2 == -1){
+      std::cout << "Bad Nodes";
+      return;
+    } 
+    if (this->hasEdge(index1,index2)){
+      std::cout << "Already Linked";
+      return;
+    }
+    this->addEdge(index1, index2);
+  }
+
+  void remove_Arc(const value_type &node1, const value_type &node2){
+    int index1 = this->getVertexIndex(node1);
+    int index2 = this->getVertexIndex(node2);
+    if (index1 == -1 || index2 == -1){
+      std::cout << "bad Nodes";
+      return;
+    }
+    if (! this->hasEdge(index1,index2)){
+      std::cout << "No Link existing";
+      return;
+    }
+    this->removeEdge(index1, index2);
+  }
+
   void addEdge(int src, int dest) {
       _adjacencyMatrix[src][dest] = true;
-      _adjacencyMatrix[dest][src] = true;
   }
 
   void removeEdge(int src, int dest) {
       _adjacencyMatrix[src][dest] = false;
-      _adjacencyMatrix[dest][src] = false;
   }
 
   bool hasEdge(int src, int dest) const{
