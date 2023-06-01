@@ -693,6 +693,23 @@ public:
     return -1;
   }
 
+  bool exists(const value_type &node) const{
+    return (this->getVertexIndex(node) != -1);
+  }
+
+  bool connected(const value_type &node1, const value_type &node2) const{
+    int index1 = this->getVertexIndex(node1);
+    int index2 = this->getVertexIndex(node2);
+    if (index1 == -1 || index2 == -1){
+      std::cout << "bad Nodes";
+      return false;
+    }
+    if  (this->hasEdge(index1,index2)||
+        (this->hasEdge(index2,index1)))
+          return true;
+    return false;
+  }
+
   void print() const{
           if (_size == 0)
             std::cout << "Empty Graph" << std::endl;

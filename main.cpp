@@ -241,11 +241,13 @@ int main(int argc, char *argv[])
   amg1.add_Arc(1,3);
   amg1.add_Arc(3,3);
   amg1.print();
-  int r = 2;
-  std::cout << std::endl << "Removing  = "  << r << std::endl;
-  std::cout << std::endl << "Index  = "  << amg1.getVertexIndex(r) << std::endl;
-  amg1.remove_Node(r);
-  amg1.print();
+  //int r = 2;
+  //std::cout << std::endl << "Removing  = "  << r << std::endl;
+  //std::cout << std::endl << "Index  = "  << amg1.getVertexIndex(r) << std::endl;
+  //amg1.remove_Node(r);
+  //amg1.print();
+  assert(amg1.connected(1,2));
+  assert(!amg1.connected(3,2));
   
   // Test con amgraph su interi: amgraph<int>
   //test_fondamentali_int();
