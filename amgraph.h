@@ -530,12 +530,11 @@ public:
 
   void addNode(const value_type &node){
     // check if node is present
-    for(int i = 0; i < _size; ++i){
-      if (node == _vertices[i]){
-        std::cout<< "node already present" << std::endl;
+    // use get vertex index
+      if ( this->getVertexIndex(node) != -1){
+        std::cout<< "node " << node <<" already present" << std::endl;
         return;
         }
-      }
     // try catch
 
     value_type* new_vertices = new value_type[_size + 1];
@@ -590,15 +589,17 @@ public:
   bool hasEdge(int src, int dest) {
       return _adjacencyMatrix[src][dest];
   }
-/* remove
-  void setVertexName(int vert, const T& name) {
-      _vertices[vert] = name;
-  }
-*/
+
   T getVertexName(int vert) {
       return _vertices[vert];
   }
 
+  int getVertexIndex(const value_type &node){
+    for(int i = 0; i < _size; ++i)
+      if (node == _vertices[i])
+        return i;
+    return -1;
+  }
 
   void print() {
           if (_size == 0)
