@@ -14,7 +14,7 @@
 /**
   @brief Classe amgraph
 
-  Classe che vuole rappresentare un grafo dinamico di tipo T.
+  Classe che vuole rappresentare un grafo dinamico di tipo T tramite array di nodi e matrice booleana di adiacenza.
 */
 template <typename T>
 class amgraph {
@@ -32,6 +32,7 @@ public:
 
     @post _vertices = nullptr
     @post _size = 0
+    @post _adjacencyMatrix = nullptr
   */
   amgraph() : _vertices(nullptr), _size(0), _adjacencyMatrix(nullptr) { // Initialization list
  
@@ -42,94 +43,12 @@ public:
 }
 
   /**
-    @brief Costruttore secondario
-
-    Costruttore secondario che serve a costruire un amgraph alla 
-    dimensione data. Le celle della matrice sono inizializzate a false.
-
-    @param sz dimensione dell'array da creare
-
-    @post _vertices != nullptr
-    @post _size = sz 
-  */
-  explicit amgraph(size_type sz) : _vertices(nullptr), _size(0), _adjacencyMatrix(nullptr) {
-  // stato coerente
-
-  // try catch
-  _vertices = new value_type[sz];
-  //for (int i = 0; i < _size; ++i){
-  //  _vertices[i] = 0;
-  //}
-  // end try
-  
-  _size = sz;
-
-  _adjacencyMatrix = new bool*[_size];
-  for (int i = 0; i < _size; ++i) {
-            _adjacencyMatrix[i] = new bool[_size];
-            for (int j = 0; j < _size; ++j) {
-                _adjacencyMatrix[i][j] = false;
-            }
-        }
-
-  #ifndef NDEBUG
-  std::cout << "amgraph::amgraph(size_type)" << std::endl;
-  #endif
-}
-
-  /**
-    @brief Costruttore secondario
-
-    Costruttore secondario che serve a costruire un amgraph alla 
-    dimensione data e con le celle dell'array inizializzate al valore
-    passato.
-
-    @param sz dimensione dell'array da creare
-    @param value valore da usare per inizializzare le celle dell'array
-
-    @post _vertices != nullptr
-    @post _size = sz 
-  */
-  amgraph(size_type sz, const value_type &value) : _vertices(nullptr), _size(0), _adjacencyMatrix(nullptr) {
-
-  _vertices = new value_type[sz];
-  _size = sz;
-  
-  _adjacencyMatrix = new bool*[_size];
-  for (int i = 0; i < _size; ++i) {
-            _adjacencyMatrix[i] = new bool[_size];
-            for (int j = 0; j < _size; ++j) {
-                _adjacencyMatrix[i][j] = false;
-            }
-        }
-
-
-  try {
-    for(unsigned int i=0; i<_size; ++i)
-      _vertices[i] = value;
-  }
-  catch(...) {
-    delete[] _vertices;
-    _vertices = nullptr;
-    _size =0;
-    
-    //todo remove adjacencymatrix
-
-    throw; // rilancio dell'eccezione !!
-  }
-
-  #ifndef NDEBUG
-  std::cout << "amgraph::amgraph(size_type, value_type)" << std::endl;
-  #endif
-}
-
-  /**
     @brief Distruttore
 
     2° METODO FONDAMENTALE: DISTRUTTORE
     Distruttore della classe. Il distruttore deve rimuovere tutte 
-    le risorse usate dalla classe. In questo caso l'array allocato 
-    sullo heap deve essere deallocato.
+    le risorse usate dalla classe. 
+    Dealloca matrice di adiacenza e array di tipo T dei vertici
   */
 
   ~amgraph()  {
@@ -158,6 +77,7 @@ public:
     
     @post _vertices != nullptr
     @post _size = other._size
+    @post _adjacencyMatrix != nullptr
   */
   amgraph(const amgraph &other) : _vertices(nullptr), _size(0), _adjacencyMatrix(nullptr) {
   _vertices = new value_type[other._size];
@@ -199,6 +119,7 @@ public:
 
     @post _amgraph != nullptr
     @post _size = other._size 
+    @post _adjacencyMatrix != nullptr
   */
   amgraph& operator=(const amgraph &other){
   if (this != &other) {
@@ -512,6 +433,8 @@ public:
         }
     }
 
+  private:
+  
   void addEdge(int src, int dest) {
       _adjacencyMatrix[src][dest] = true;
   }
@@ -534,6 +457,8 @@ public:
         return i;
     return -1;
   }
+
+  public:
 
   bool exists(const value_type &node) const{
     return (this->getVertexIndex(node) != -1);
@@ -571,7 +496,7 @@ public:
 
 private:
 
-  value_type *_vertices; ///< Puntatore all'array
+  value_type *_vertices; ///< Puntatore al primo vertice
   size_type _size; ///< Dimensione dell'array
   bool** _adjacencyMatrix;
 
