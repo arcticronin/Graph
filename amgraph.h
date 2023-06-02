@@ -215,107 +215,6 @@ public:
   return *this;
 }
 
-// ?? lo devo fare?
-
-  /**
-    @brief Accesso alla dimensione dell'array (stile C++)
-
-    Metodo per ottenere la dimensione dell'array dinamico
-
-    @return dimensione dell'array dinamico
-  */
-  size_type size(void) const{
-    return _size;
-  }
-
-  /**
-    @brief Accesso ai dati in lettura (stile Java)
-
-    Metodo getter per leggere il valore index-esimo dell'array
-
-    @param index indice della cella dell'array da leggere
-
-    @return valore della cella index-esima
-
-    @pre index < size()
-  */
-  value_type get_value(size_type index) const {
-    assert(index<_size);
-
-    return _vertices[index];
-  }
-
-  /**
-    @brief Accesso ai dati in scrittura (stile Java)
-
-    Metodo setter per scrivere un valore nella cella index-esima dell'array
-
-    @param index indice della cella dell'array da scrivere
-    @param value valore da scrivere nella cella
-
-    @pre index < size()
-  */  
-  void set_value(unsigned int index, const value_type &value){
-  assert(index<_size);
-
-  _vertices[index] = value;
-}
-
-  /**
-    @brief Getter/Setter della cella index-esima (stile C++)
-
-    Metodo che permette di leggere e/o scrivere la cella
-    index-esima dell'array
-
-    @param index della cella da leggere/scrivere
-
-    @return reference alla cella index-esima 
-
-    @pre index < size()
-  */
-  value_type &value(size_type index) { 
-  assert(index<_size);
-
-  return _vertices[index];
-}
-
-  /**
-    @brief Getter della cella index-esima (stile C++)
-
-    Metodo che permette di leggere la cella
-    index-esima dell'array. Il metodo si può usare
-    solo su istanze costanti della classe.
-
-    @param index della cella da leggere
-
-    @return reference alla cella index-esima 
-
-    @pre index < size()
-  */
-  const value_type &value(size_type index) const { 
-  assert(index<_size);
-
-  return _vertices[index];
-}
-
-  /**
-    @brief Getter/Setter della cella index-esima (stile op[])
-
-    Metodo che permette di leggere e/o scrivere la cella
-    index-esima dell'array
-
-    @param index della cella da leggere/scrivere
-
-    @return reference alla cella index-esima 
-
-    @pre index < size()
-  */
-  value_type &operator[](size_type index) { 
-  assert(index<_size);
-
-  return _vertices[index];
-}
-
   /**
     @brief Getter della cella index-esima (stile op[])
 
@@ -364,7 +263,7 @@ public:
   // parti private della classe
   friend std::ostream& operator<<(std::ostream &os, const amgraph<T> &amg) {
     os << "size " << amg._size << " node names:"<< std::endl;
-    for(typename amgraph<T>::size_type i = 0; i < amg.size() ; i++)
+    for(typename amgraph<T>::size_type i = 0; i < amg.getSize() ; i++)
       os << amg[i] << ' ';
     os << std::endl << "Adjacency Matrix:" << std::endl;
     for (int i = 0; i < amg._size; ++i) {
@@ -412,11 +311,6 @@ public:
       return ptr;
     }
 
-    // Operatore di accesso random
-    reference operator[](int index) {
-      return ptr[index];
-    }
-    
     // Operatore di iterazione post-incremento
     const_iterator operator++(int) {
       const_iterator old(*this);
@@ -430,45 +324,6 @@ public:
       return *this;
     }
 
-    // Operatore di iterazione post-decremento
-    const_iterator operator--(int) {
-      const_iterator old(*this);
-      --ptr;
-      return old;
-    }
-
-    // Operatore di iterazione pre-decremento
-    const_iterator &operator--() {
-      --ptr;
-      return *this;
-    }
-
-    // Spostamentio in avanti della posizione
-    const_iterator operator+(int offset) {
-      return const_iterator(ptr+offset);
-    }
-
-    // Spostamentio all'indietro della posizione
-    const_iterator operator-(int offset) {
-      return const_iterator(ptr-offset);
-    }
-    
-    // Spostamentio in avanti della posizione
-    const_iterator& operator+=(int offset) {
-      ptr+=offset;
-      return *this;
-    }
-
-    // Spostamentio all'indietro della posizione
-    const_iterator& operator-=(int offset) {
-      ptr-=offset;
-      return *this;
-    }
-
-    // Numero di elementi tra due iteratori
-    difference_type operator-(const const_iterator &other) {
-      return ptr - other.ptr;
-    }
   
     // Uguaglianza
     bool operator==(const const_iterator &other) const {
@@ -478,27 +333,6 @@ public:
     // Diversita'
     bool operator!=(const const_iterator &other) const {
       return ptr != other.ptr;
-    }
-
-    // Confronto
-    bool operator>(const const_iterator &other) const {
-      return ptr > other.ptr;
-    }
-    
-
-    bool operator>=(const const_iterator &other) const {
-      return ptr >= other.ptr;
-    }
-
-    // Confronto
-    bool operator<(const const_iterator &other) const {
-      return ptr < other.ptr;
-    }
-    
-    
-    // Confronto
-    bool operator<=(const const_iterator &other) const {
-      return ptr <= other.ptr;
     }
 
     private:
@@ -717,6 +551,7 @@ public:
           return true;
     return false;
   }
+  
 
   void print() const{
           if (_size == 0)
