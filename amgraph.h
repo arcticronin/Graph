@@ -14,15 +14,28 @@
 /**
   @brief Classe amgraph
 
-  Classe che vuole rappresentare un grafo dinamico di tipo T tramite array di nodi e matrice booleana di adiacenza.
+  Classe che vuole rappresentare un grafo dinamico di tipo T 
+  tramite array di nodi e matrice booleana di adiacenza.
+
+  Nomenclatura:
+    - Arc e Node (come da consegna) per gli oggetti di alto livello
+      e le funzioni pubbliche
+    - Edge e Vertex per gli oggetti di basso livello e funzioni private
+    
+  esempio:
+    - Edge è interpretato come il collegamento tra gli indici dei
+        nodi rappresentato come un numero booleano
+    - Arc invece rappresenta il collegamento tra due oggetti Nodi
+    - Vertex è usato nelle funzioni private
+
 */
 template <typename T>
 class amgraph {
 
 public:
   
-  typedef T value_type; ///< Tipo del dato dell'array
-  typedef unsigned int size_type; ///< Tipo del dato size
+  typedef T value_type;
+  typedef unsigned int size_type; 
  
   /**
     @brief Costruttore di default
@@ -137,15 +150,15 @@ public:
 }
 
   /**
-    @brief Getter della cella index-esima (stile op[])
-
-    Metodo che permette di leggere la cella
-    index-esima dell'array. Il metodo si può usare
+    @brief Getter del nodo [index]
+    
+    Metodo che permette di leggere il Nodo/Vertice
+    in posizione index dell'array. Il metodo si può usare
     solo su istanze costanti della classe.
 
     @param index della cella da leggere
 
-    @return reference alla cella index-esima 
+    @return reference al Nodo/Vertice di tipo value_type in posizione index 
 
     @pre index < size()
   */
@@ -161,7 +174,7 @@ public:
 
     Funzione che scambia il contenuto di due amgraph
 
-    @param other il amgraph con cui scambiare il contenuto
+    @param other amgraph con cui scambiare il contenuto
   */
   void swap(amgraph &other) {
     std::swap(_vertices, other._vertices);
@@ -180,8 +193,6 @@ public:
 
     @return reference allo stream di output
   */
-  // Diamo accesso alla funzione globale, esterna alla classe, alle
-  // parti private della classe
   friend std::ostream& operator<<(std::ostream &os, const amgraph<T> &amg) {
     os << "size " << amg._size << " node names:"<< std::endl;
     for(typename amgraph<T>::size_type i = 0; i < amg.getSize() ; i++)
@@ -195,10 +206,17 @@ public:
     return os;
   }
 
-  class const_iterator; // forward declaration
 
+  /**
+    @brief definizione di classe const_iterator
+
+    metodi definiti per solo operazioni di tipo Forward
+    
+  */
+
+  class const_iterator;   
   class const_iterator {
-    //  
+
   public:
     typedef std::random_access_iterator_tag iterator_category;
     typedef T                        value_type;
@@ -206,7 +224,11 @@ public:
     typedef const T*                 pointer;
     typedef const T&                 reference;
 
-  
+  /**
+    @brief Costruttore
+
+    @param ptr inizializzato a nullptr per iteratore vuoto
+  */  
     const_iterator() {
       ptr = nullptr;
     }
@@ -214,44 +236,70 @@ public:
     const_iterator(const const_iterator &other) {
       ptr = other.ptr;
     }
+  /**
+    @brief Copy constructor
 
+  
+    @param other altro const_iterator
+  */
     const_iterator& operator=(const const_iterator &other) {
       ptr = other.ptr;
       return *this;
     }
+  /**
+    @brief Distruttore
 
+  */
     ~const_iterator() { }
+  /**
+    @brief Metodo dereferenziamento
 
-    // Ritorna il dato riferito dall'iteratore (dereferenziamento)
+    type reference definito nella classe
+
+  */
     reference operator*() const {
       return *ptr;
     }
+ /**
+    @brief Metodo che ritorna il puntatore
 
-    // Ritorna il puntatore al dato riferito dall'iteratore
+    type pointer definito nella classe
+  */
     pointer operator->() const {
       return ptr;
     }
+ /**
+    @brief definizione di operatore post-incremento
 
-    // Operatore di iterazione post-incremento
+  */
     const_iterator operator++(int) {
       const_iterator old(*this);
       ++ptr;
       return old;
     }
+ /**
+    @brief definizione di operatore pre-incremento
 
-    // Operatore di iterazione pre-incremento
+  */
     const_iterator &operator++() {
       ++ptr;
       return *this;
     }
+  /**
+    @brief operatore di uguaglianza
 
-  
-    // Uguaglianza
+    Necessario per fermarsi nei cicli comparando due const_iterator
+
+  */ 
     bool operator==(const const_iterator &other) const {
       return ptr == other.ptr;
     }
+ /**
+    @brief operatore di disuguaglianza
 
-    // Diversita'
+    Necessario per fermarsi nei cicli comparando due const_iterator
+
+  */
     bool operator!=(const const_iterator &other) const {
       return ptr != other.ptr;
     }
@@ -267,21 +315,37 @@ public:
     // tipicamente nei metodi begin e end
     const_iterator(const T*p) { 
       ptr = p; 
-    }
-    
-    // !!! Eventuali altri metodi privati
-    
-  }; // classe const_iterator
-  
-  // Ritorna l'iteratore all'inizio della sequenza dati
+    }    
+  }; // fine della classe const_iterator
+  /**
+    @brief begin
+
+    Funzione che genera il puntatore al primo elemento
+
+  */ 
   const_iterator begin() const {
     return const_iterator(_vertices);
   }
-  
-  // Ritorna l'iteratore alla fine della sequenza dati
+  /**
+    @brief end
+    
+    Funzione che genera il puntatore successivo all'ultimo elemento
+
+    NOTA: non dereferenzalizzarlo MAI
+  */ 
   const_iterator end() const {
     return const_iterator(_vertices + _size);
   }
+  /**
+    @brief Funzione per aggiungere un Nodo
+
+    I nodi aggiunti non avranno collegamenti e saranno isolati.
+    Per rappresentarlo basta un value_type che rappresenta il nome, 
+    l'identificativo del nodo da aggiungere.
+    
+    @param una regreference a un nome di un nodo di tipo value_type
+
+  */
   void add_Node(const value_type &node){
     // check if node is present
     // use get vertex index
@@ -299,7 +363,6 @@ public:
     new_vertices[_size] = node;
 
     // handle matrix
-
     bool** new_adjacencyMatrix = new bool*[_size + 1];
     
     for (int i = 0; i < _size + 1 ; ++i) {
@@ -311,6 +374,7 @@ public:
       for (int j = 0; j < _size; ++j)
           new_adjacencyMatrix[i][j] = _adjacencyMatrix[i][j];
       }
+
     // fill last row and last column with "false"
     for (int i = 0; i < _size + 1; ++i) {
       new_adjacencyMatrix[_size][i] = false;
@@ -326,10 +390,21 @@ public:
       }
     delete[] new_adjacencyMatrix;
     
-    // size++
     _size += 1;
     }
+/**
+    @brief Funzione per rimuovere un Nodo
 
+    rimozione nodo:
+    1) si controlla che il nodo sia presente
+      @see getVertexIndex
+      scelta implementativa: ritorno se il nodo non è presente
+      come se avessi effettuato la rimozione
+    2)
+    
+    @param una regreference a un nome di un nodo di tipo value_type
+
+*/
   void remove_Node(const value_type &node){
     // check if node is present
     // use get vertex index
@@ -411,15 +486,28 @@ public:
     this->addEdge(index1, index2);
   }
 
+/**
+    @brief Funzione per rimuovere un Arco
+
+    Si controlla che il nodo sia presente
+      @see getVertexIndex ritorna -1 se un nodo non è presente
+      @see hasEdge ritorna false se non c'è collegamento tra i nodi
+      scelta implementativa: ritorno senza eseguire nulla,
+      la rimozione di qualcosa di non esistente la considero effettuata.
+    
+    @param una regreference a un nome di un nodo di tipo value_type
+
+*/
   void remove_Arc(const value_type &node1, const value_type &node2){
     int index1 = this->getVertexIndex(node1);
     int index2 = this->getVertexIndex(node2);
     if (index1 == -1 || index2 == -1){
-      std::cout << "bad Nodes";
+      std::cout << "Trying to remove an arch from non existing node" 
+      << std::endl;
       return;
     }
     if (! this->hasEdge(index1,index2)){
-      std::cout << "No Link existing";
+      std::cout << "No Link existing, nothing removed" << std::endl;
       return;
     }
     this->removeEdge(index1, index2);
