@@ -182,7 +182,7 @@ public:
     std::swap(_adjacencyMatrix, other._adjacencyMatrix);
   }
 
-  /**
+  /*
     @brief ridefinizione operatore di stream
 
     Ridefinizione dell'operatore di stream per scrivere un
@@ -192,7 +192,6 @@ public:
     @param db amgraph da scrivere (operando di destra)
 
     @return reference allo stream di output
-  */
   friend std::ostream& operator<<(std::ostream &os, const amgraph<T> &amg) {
     os << "size " << amg._size << " node names:"<< std::endl;
     for(typename amgraph<T>::size_type i = 0; i < amg.getSize() ; i++)
@@ -206,6 +205,7 @@ public:
     return os;
   }
 
+  */
 
   /**
     @brief definizione di classe const_iterator
@@ -350,7 +350,8 @@ public:
     // check if node is present
     // use get vertex index
       if ( this->getVertexIndex(node) != -1){
-        std::cout<< "node " << node <<" already present" << std::endl;
+        //std::cout<< "node " << node <<" already present" << std::endl;
+        std::cout<< "node already present" << std::endl;
         return;
         }
     // try catch

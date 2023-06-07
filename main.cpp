@@ -26,8 +26,8 @@ int test_int(){
   assert(!graph.connected(5, 3));
 
   // Print the graph
-  std::cout << "graph for test_int:"<< std::endl << graph << std::endl;
-
+  std::cout << "graph for test_int:";//<< std::endl << graph << std::endl;
+  graph.print();
   return 0;
   
 }
@@ -48,8 +48,8 @@ int test_string(){
   std::cout << "Nodes B and C are connected: " 
     << graph.connected("B", "C") << std::endl;
 
-  std::cout << "graph for test_string:"<< std::endl << graph << std::endl;
-
+  std::cout << "graph for test_string:"<< std::endl ;//<< graph << std::endl;
+  graph.print();
   return 0;
 }
 
@@ -96,7 +96,8 @@ int test_persona(){
   std::cout << "Nodes person2 and person3 are connected: " << graph.connected(person2, person3) << std::endl;
 
   // Print the graph
-  std::cout << "graph for test_persona"<< graph << std::endl;
+  std::cout << "graph for test_persona";//<< graph << std::endl;
+  graph.print();
   // Test the const forward iterator
   std::cout << "Iterating over the Graph using a const forward iterator:" << std::endl;
   for (const auto& person : graph) {
@@ -154,26 +155,27 @@ void test_memory_limit (int max_nodes){
     std::cout << std::endl;
 }
 
+void test_memory_limit_2(int max_nodes) {
+    amgraph<std::vector<int>> graph; 
+    for (int i = 1; i <= max_nodes; ++i) {
+        std::vector<int> node_vector;
+        for (int j = 1; j <= 100000; ++j) {
+            node_vector.push_back(i * j); 
+            //riempi i vettori, dovranno essere diversi
+        }
+        graph.add_Node(node_vector); 
+        std::cout << "Trying: " << i << "/" << max_nodes
+                  << " (" << (i * 100 / max_nodes) << "%)";
+        std::cout.flush();
+        std::cout << "\r";
+    }
+    std::cout << std::endl;
+}
+
 // empty implementation of the output stream for cstructure to test
 // std::ostream& operator<<(std::ostream& os, const std::vector<int> obj) {
 //     return os;
 // }
-
-// void test_memory_limit_2(int max_nodes) {
-//     amgraph<std::vector<int>> graph; // Use std::vector<int> as the data structure type
-    
-//     for (int i = 1; i <= max_nodes; ++i) {
-//         graph.add_Node(std::vector<int>(100)); 
-//         // Create a new std::vector<int> with 100 elements and add it to the graph
-//         std::cout << "Trying: " << i << "/" << max_nodes 
-//                   << " (" << (i * 100 / max_nodes) << "%)";
-//         std::cout.flush();
-//         std::cout << "\r";
-//     }
-
-//     std::cout << std::endl;
-// }
-
 
 
 int main(int argc, char *argv[]){
@@ -193,7 +195,7 @@ int main(int argc, char *argv[]){
 
   // breaking test
   test_memory_limit(1000);
-  //test_memory_limit_2(1000);
+  test_memory_limit_2(1000);
 
   std::cout << "All test were successful" << std::endl;
   return 0;
