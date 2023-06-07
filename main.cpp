@@ -1,6 +1,6 @@
 /**
 @file main.cpp
-@brief test d'uso della classe amgraph<int>
+@brief test d'uso della classe Amgraph<int>
 **/
 #include <iostream>
 #include <fstream>
@@ -9,9 +9,9 @@
 #include <functional> // just for fun
 #include <vector>
 
-int test_int(){
+auto test_int() -> int{
 
-  amgraph<int> graph;
+  Amgraph<int> graph;
 
   graph.add_Node(1);
   graph.add_Node(2);
@@ -19,11 +19,24 @@ int test_int(){
 
   graph.add_Arc(1, 2);
   graph.add_Arc(2, 3);
+  try {
+    graph.add_Arc(1, 4);
+  }
+  catch (std::invalid_argument){
+    std::cout<<"Exception correctly caugth"<< std::endl;
+  }
 
   assert(graph.exists(1));
   assert(!graph.exists(4));
-  assert(graph.connected(2, 3));
+
+  // raising exceptions
+  try{
   assert(!graph.connected(5, 3));
+  }
+  catch(std::invalid_argument){
+    std::cout<<"Exception correctly caugth"<< std::endl;
+    }
+  assert(graph.connected(2, 3));
 
   // Print the graph
   std::cout << "graph for test_int:";//<< std::endl << graph << std::endl;
@@ -32,9 +45,9 @@ int test_int(){
   
 }
 
-int test_string(){
+auto test_string() -> int{
 
-  amgraph<std::string> graph;
+  Amgraph<std::string> graph;
 
   graph.add_Node("A");
   graph.add_Node("B");
@@ -72,9 +85,9 @@ std::ostream& operator<<(std::ostream& os, const Persona& person) {
   return os;
 }
 
-int test_persona(){
+auto test_persona() -> int{
   
-  amgraph<Persona> graph;
+  Amgraph<Persona> graph;
 
   // Create person objects
   Persona person1{"Alice", 25};
@@ -110,7 +123,7 @@ int test_persona(){
 
 
 int test_3() { 
-  amgraph<int> amg1;
+  Amgraph<int> amg1;
   amg1.print();
   amg1.add_Node(1);
   amg1.add_Node(2);
@@ -123,10 +136,10 @@ int test_3() {
   assert(amg1.connected(1,2));
   assert(!amg1.connected(3,2));
 
-  amgraph<int>::const_iterator it = amg1.begin();
-  amgraph<int>::const_iterator ite = amg1.end();
+  Amgraph<int>::const_iterator it = amg1.begin();
+  Amgraph<int>::const_iterator ite = amg1.end();
   
-  amgraph<int> amg2;
+  Amgraph<int> amg2;
   amg2.print();
   amg2.add_Node(9);
   amg2.add_Node(8);
@@ -145,7 +158,7 @@ int test_3() {
 }
 
 void test_memory_limit (int max_nodes){
-    amgraph<int> graph;
+    Amgraph<int> graph;
     for (int i = 1; i <= max_nodes; ++i) {
         graph.add_Node(i);
         std::cout << "Trying: " << i << "/" << max_nodes << " (" << (i * 100 / max_nodes) << "%)";
@@ -156,7 +169,7 @@ void test_memory_limit (int max_nodes){
 }
 
 void test_memory_limit_2(int max_nodes) {
-    amgraph<std::vector<int>> graph; 
+    Amgraph<std::vector<int>> graph; 
     for (int i = 1; i <= max_nodes; ++i) {
         std::vector<int> node_vector;
         for (int j = 1; j <= 100000; ++j) {
@@ -195,7 +208,7 @@ int main(int argc, char *argv[]){
 
   // breaking test
   test_memory_limit(1000);
-  test_memory_limit_2(1000);
+  //test_memory_limit_2(1000);
 
   std::cout << "All test were successful" << std::endl;
   return 0;

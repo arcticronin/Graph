@@ -1,18 +1,18 @@
-#ifndef amgraph_H
-#define amgraph_H
+#ifndef AMGRAPH_H
+#define AMGRAPH_H
 
 #include <ostream> // std::ostream
 #include <cassert> 
 #include <iterator> // std::forward_iterator_tag
 #include <cstddef>  // std::ptrdiff_t
-
+#include <stdexcept>
 /**
-  @file amgraph.h
-  @brief Dichiarazione della classe amgraph
+  @file Amgraph.h
+  @brief Dichiarazione della classe Amgraph
 */
 
 /**
-  @brief Classe amgraph
+  @brief Classe Amgraph
 
   Classe che vuole rappresentare un grafo dinamico di tipo T 
   tramite array di nodi e matrice booleana di adiacenza.
@@ -30,7 +30,7 @@
 
 */
 template <typename T>
-class amgraph {
+class Amgraph {
 
 public:
   
@@ -47,24 +47,23 @@ public:
     @post _size = 0
     @post _adjacencyMatrix = nullptr
   */
-  amgraph() : _vertices(nullptr), _size(0), _adjacencyMatrix(nullptr) { // Initialization list
+  Amgraph() : _vertices(nullptr), _size(0), _adjacencyMatrix(nullptr) { // Initialization list
  
   
   #ifndef NDEBUG
-  std::cout << "amgraph::amgraph()" << std::endl;
+  std::cout << "Amgraph::Amgraph()" << std::endl;
   #endif
 }
 
   /**
     @brief Distruttore
 
-    2° METODO FONDAMENTALE: DISTRUTTORE
     Distruttore della classe. Il distruttore deve rimuovere tutte 
     le risorse usate dalla classe. 
     Dealloca matrice di adiacenza e array di tipo T dei vertici
   */
 
-  ~amgraph()  {
+  ~Amgraph()  {
   for (int i = 0; i < _size; ++i) {
             delete[] _adjacencyMatrix[i];
         }
@@ -75,30 +74,31 @@ public:
   _size = 0;
 
   #ifndef NDEBUG
-  std::cout << "amgraph::~amgraph()"<< std::endl;
+  std::cout << "Amgraph::~Amgraph()"<< std::endl;
   #endif
 }
 
   /**
     @brief Copy Constructor
 
-    3° METODO FONDAMENTALE: COPY CONSTRUCTOR
     Costruttore di copia. Serve a creare un oggetto come copia di un 
     altro oggetto. I due oggetti devono essere indipendenti.
 
-    @param other amgraph sorgente da copiare
+    @param other Amgraph sorgente da copiare
     
     @post _vertices != nullptr
     @post _size = other._size
     @post _adjacencyMatrix != nullptr
   */
-  amgraph(const amgraph &other) : _vertices(nullptr), _size(0), _adjacencyMatrix(nullptr) {
+  Amgraph(const Amgraph &other) : _vertices(nullptr), _size(0), _adjacencyMatrix(nullptr) {
+
+  
   _vertices = new value_type[other._size];
   _size = other._size;
+  
   try {
     for(size_type i=0; i<_size; ++i)
       _vertices[i] = other._vertices[i];
-
   }
   catch(...) {
     delete[] _vertices;
@@ -106,44 +106,58 @@ public:
     _size =0;
     throw;
   }
+
   _adjacencyMatrix = new bool*[_size];
-  for (int i = 0; i < _size; ++i) {
-            _adjacencyMatrix[i] = new bool[_size];
-            for (int j = 0; j < _size; ++j) {
-                _adjacencyMatrix[i][j] = other._adjacencyMatrix[i][j];
+
+  try{
+    for (int i = 0; i < _size; ++i) {
+              _adjacencyMatrix[i] = new bool[_size];
+              for (int j = 0; j < _size; ++j) {
+                  _adjacencyMatrix[i][j] = other._adjacencyMatrix[i][j];
+              }
+          }
+  }
+  catch (...) {
+        // Allocation failed
+        if (_adjacencyMatrix != nullptr) {
+            for (int i = 0; i < _size; ++i) {
+                delete[] _adjacencyMatrix[i];
             }
+            // Deallocate the array of row pointers
+            delete[] _adjacencyMatrix;
         }
+        throw;
+    }
   #ifndef NDEBUG
-  std::cout << "amgraph::amgraph(const amgraph&)"<< std::endl;
+  std::cout << "Amgraph::Amgraph(const Amgraph&)"<< std::endl;
   #endif
 }
 
   /**
     @brief Operatore di assegnamento
 
-    4° METODO FONDAMENTALE: OPERATORE ASSEGNAMENTO
     L'operatore di assegnamento serve a copiare il contenuto di un oggetto
     in un altro oggetto dello stesso tipo. I due oggetti devono essere
     indipendenti.
 
-    @param other amgraph sorgenete da copiare
+    @param other Amgraph sorgenete da copiare
 
     @return un reference all'oggetto corrente
 
-    @post _amgraph != nullptr
+    @post _Amgraph != nullptr
     @post _size = other._size 
     @post _adjacencyMatrix != nullptr
   */
-  amgraph& operator=(const amgraph &other){
+  Amgraph& operator=(const Amgraph &other){
   if (this != &other) {
 
-    amgraph tmp(other);
+    Amgraph tmp(other);
 
     this->swap(tmp);
   }
 
   #ifndef NDEBUG
-  std::cout << "amgraph::operator=(const amgraph &)" << std::endl;
+  std::cout << "Amgraph::operator=(const Amgraph &)" << std::endl;
   #endif
 
   return *this;
@@ -170,13 +184,13 @@ public:
 
 
   /**
-    @brief Metodo swap per la classe amgraph
+    @brief Metodo swap per la classe Amgraph
 
-    Funzione che scambia il contenuto di due amgraph
+    Funzione che scambia il contenuto di due Amgraph
 
-    @param other amgraph con cui scambiare il contenuto
+    @param other Amgraph con cui scambiare il contenuto
   */
-  void swap(amgraph &other) {
+  void swap(Amgraph &other) {
     std::swap(_vertices, other._vertices);
     std::swap(_size, other._size); 
     std::swap(_adjacencyMatrix, other._adjacencyMatrix);
@@ -186,15 +200,15 @@ public:
     @brief ridefinizione operatore di stream
 
     Ridefinizione dell'operatore di stream per scrivere un
-    amgraph su uno stream di output
+    Amgraph su uno stream di output
 
     @param os stream di output (operando di sinistra)
-    @param db amgraph da scrivere (operando di destra)
+    @param db Amgraph da scrivere (operando di destra)
 
     @return reference allo stream di output
-  friend std::ostream& operator<<(std::ostream &os, const amgraph<T> &amg) {
+  friend std::ostream& operator<<(std::ostream &os, const Amgraph<T> &amg) {
     os << "size " << amg._size << " node names:"<< std::endl;
-    for(typename amgraph<T>::size_type i = 0; i < amg.getSize() ; i++)
+    for(typename Amgraph<T>::size_type i = 0; i < amg.getSize() ; i++)
       os << amg[i] << ' ';
     os << std::endl << "Adjacency Matrix:" << std::endl;
     for (int i = 0; i < amg._size; ++i) {
@@ -309,7 +323,7 @@ public:
 
     // La classe container deve essere messa friend dell'iteratore per poter
     // usare il costruttore di inizializzazione.
-    friend class amgraph; 
+    friend class Amgraph; 
 
     // Costruttore privato di inizializzazione usato dalla classe container
     // tipicamente nei metodi begin e end
@@ -344,6 +358,10 @@ public:
     l'identificativo del nodo da aggiungere.
     
     @param una regreference a un nome di un nodo di tipo value_type
+    
+    @post _vertices != nullptr
+    @post _size = _size + 1
+    @post _adjacencyMatrix != nullptr
 
   */
   void add_Node(const value_type &node){
@@ -354,33 +372,46 @@ public:
         std::cout<< "node already present" << std::endl;
         return;
         }
-    // try catch
 
     value_type* new_vertices = new value_type[_size + 1];
-    // copy vertices
-    for (int i = 0; i < _size ; ++i) {
-      new_vertices[i] = _vertices[i];
+    try{
+      // copy vertices
+      for (int i = 0; i < _size ; ++i) {
+        new_vertices[i] = _vertices[i];
       }
-    new_vertices[_size] = node;
-
-    // handle matrix
+      new_vertices[_size] = node;
+    }
+    catch(...){
+      delete[] new_vertices;
+      throw;
+    }
+        // handle matrix
     bool** new_adjacencyMatrix = new bool*[_size + 1];
     
-    for (int i = 0; i < _size + 1 ; ++i) {
-      new_adjacencyMatrix[i] = new bool[_size + 1];
-      }
-
-    // copy old block
-    for (int i = 0; i < _size; ++i) {
-      for (int j = 0; j < _size; ++j)
-          new_adjacencyMatrix[i][j] = _adjacencyMatrix[i][j];
-      }
-
-    // fill last row and last column with "false"
-    for (int i = 0; i < _size + 1; ++i) {
-      new_adjacencyMatrix[_size][i] = false;
-      new_adjacencyMatrix[i][_size] = false;
-      }
+    try{
+      for (int i = 0; i < _size + 1 ; ++i) {
+        new_adjacencyMatrix[i] = new bool[_size + 1];
+        }
+      // copy old block
+      for (int i = 0; i < _size; ++i) {
+        for (int j = 0; j < _size; ++j)
+            new_adjacencyMatrix[i][j] = _adjacencyMatrix[i][j];
+        }
+      // fill last row and last column with "false"
+      for (int i = 0; i < _size + 1; ++i) {
+        new_adjacencyMatrix[_size][i] = false;
+        new_adjacencyMatrix[i][_size] = false;
+        }
+    }
+    catch(...){
+        if (new_adjacencyMatrix != nullptr) {
+            for (int i = 0; i < (_size + 1); ++i) {
+                delete[] new_adjacencyMatrix[i];
+            }
+            delete[] new_adjacencyMatrix;
+        }
+        throw;
+    }
 
     // clean temp data
     std::swap(_vertices, new_vertices);
@@ -401,9 +432,13 @@ public:
       @see getVertexIndex
       scelta implementativa: ritorno se il nodo non è presente
       come se avessi effettuato la rimozione
-    2)
     
-    @param una regreference a un nome di un nodo di tipo value_type
+    @post _vertices != nullptr
+    @post _adjacencyMatrix != nullptr
+      if node is present:
+    @post _size = _size - 1
+
+    @param node una regreference a un nome di un nodo di tipo value_type
 
 */
   void remove_Node(const value_type &node){
@@ -418,48 +453,64 @@ public:
     // try catch
 
     value_type* new_vertices = new value_type[_size - 1];
+    try{
+      // copy vertices
+      for (int i = 0; i < index ; ++i) {
+        new_vertices[i] = _vertices[i];
+        }
+      for (int i = index; i < _size - 1 ; ++i) {
+        new_vertices[i] = _vertices[i + 1];
+        }
+    }
+    catch(...){
+      delete[] new_vertices;
+      throw;      
+    }
 
-    // copy vertices
-    for (int i = 0; i < index ; ++i) {
-      new_vertices[i] = _vertices[i];
-      }
-    for (int i = index; i < _size - 1 ; ++i) {
-      new_vertices[i] = _vertices[i + 1];
-      }
-
-    // handle matrix
-
+        // handle matrix
     bool** new_adjacencyMatrix = new bool*[_size - 1];
-    
-    for (int i = 0; i < _size - 1 ; ++i) {
-      new_adjacencyMatrix[i] = new bool[_size - 1];
-      }
 
-    // copy first block
-    for (int i = 0; i < index; ++i) {
-      for (int j = 0; j < index; ++j)
-          new_adjacencyMatrix[i][j] = _adjacencyMatrix[i][j];
-      }
+    try{
+      
+      for (int i = 0; i < _size - 1 ; ++i) {
+        new_adjacencyMatrix[i] = new bool[_size - 1];
+        }
 
-     // copy fourth block
-    for (int i = index; i < _size - 1; ++i) {
-      for (int j = index; j < _size - 1; ++j)
-          new_adjacencyMatrix[i][j] = _adjacencyMatrix[i + 1][j + 1];
-      }
+      // copy first block
+      for (int i = 0; i < index; ++i) {
+        for (int j = 0; j < index; ++j)
+            new_adjacencyMatrix[i][j] = _adjacencyMatrix[i][j];
+        }
 
-    // copy second block
-    for (int i = 0; i < index; ++i) {
-      for (int j = index; j < _size - 1; ++j)
-          new_adjacencyMatrix[i][j] = _adjacencyMatrix[i][j + 1];
-      }
+      // copy fourth block
+      for (int i = index; i < _size - 1; ++i) {
+        for (int j = index; j < _size - 1; ++j)
+            new_adjacencyMatrix[i][j] = _adjacencyMatrix[i + 1][j + 1];
+        }
 
-     // copy third block
-    for (int i = index; i < _size - 1; ++i) {
-      for (int j = 0; j < index; ++j)
-          new_adjacencyMatrix[i][j] = _adjacencyMatrix[i + 1][j];
-      }
-     
+      // copy second block
+      for (int i = 0; i < index; ++i) {
+        for (int j = index; j < _size - 1; ++j)
+            new_adjacencyMatrix[i][j] = _adjacencyMatrix[i][j + 1];
+        }
 
+      // copy third block
+      for (int i = index; i < _size - 1; ++i) {
+        for (int j = 0; j < index; ++j)
+            new_adjacencyMatrix[i][j] = _adjacencyMatrix[i + 1][j];
+        }
+    }
+    catch(...){
+      // Allocation failed
+        if (_adjacencyMatrix != nullptr) {
+            for (int i = 0; i < _size - 1; ++i) {
+                delete[] new_adjacencyMatrix[i];
+            }
+            // Deallocate the array of row pointers
+            delete[] new_adjacencyMatrix;
+            }
+        throw;
+        }
     // clean temp data
     std::swap(_vertices, new_vertices);
     delete[] new_vertices;
@@ -473,10 +524,26 @@ public:
     _size -= 1;
     }
 
+  /**
+    @brief Funzione per aggiungere un Arco
+    
+    Recupera gli indici dei due nodi da linkare.
+    poi setta la riga e colonna corrispondente ai due Nodi
+    l'arco andrà da Node 1 a node 2.
+
+    Si appoggia a membri privati che gestiscono Edges e Vertices
+    @see getVertexIndex
+    @see hasEdge
+    @see addEdge
+    @param node1 const reference al nodo 1
+    @param node2 const reference al nodo 2
+
+  */
   void add_Arc(const value_type &node1, const value_type &node2){
     int index1 = this->getVertexIndex(node1);
     int index2 = this->getVertexIndex(node2);
     if (index1 == -1 || index2 == -1){
+      throw std::invalid_argument("Connected: Nodi non esistenti, c'è un errore di logica");
       std::cout << "Bad Nodes";
       return;
     } 
@@ -491,24 +558,31 @@ public:
     @brief Funzione per rimuovere un Arco
 
     Si controlla che il nodo sia presente
-      @see getVertexIndex ritorna -1 se un nodo non è presente
-      @see hasEdge ritorna false se non c'è collegamento tra i nodi
+    sfrutta
+    si appoggia a membri privati
+    @see getVertexIndex  che ritorna -1 se un nodo non è presente
+    @see hasEdge ritorna false se non c'è collegamento tra i nodi
+      
       scelta implementativa: ritorno senza eseguire nulla,
       la rimozione di qualcosa di non esistente la considero effettuata.
     
-    @param una regreference a un nome di un nodo di tipo value_type
+    @param node1 una regreference a un nome di un nodo di tipo value_type
+    @param node2 una regreference a un nome di un nodo di tipo value_type
 
 */
   void remove_Arc(const value_type &node1, const value_type &node2){
     int index1 = this->getVertexIndex(node1);
     int index2 = this->getVertexIndex(node2);
+    assert(index1 != -1 && index2 != -1);
     if (index1 == -1 || index2 == -1){
-      std::cout << "Trying to remove an arch from non existing node" 
+      throw std::invalid_argument
+      ("remove_Arc: Nodi non esistenti, c'è un errore di logica");
+      std::cout << "ERROR: Trying to remove an arch from non existing node" 
       << std::endl;
       return;
     }
     if (! this->hasEdge(index1,index2)){
-      std::cout << "No Link existing, nothing removed" << std::endl;
+      std::cout << "WARNING: No Link existing, nothing removed" << std::endl;
       return;
     }
     this->removeEdge(index1, index2);
@@ -557,6 +631,7 @@ public:
     int index1 = this->getVertexIndex(node1);
     int index2 = this->getVertexIndex(node2);
     if (index1 == -1 || index2 == -1){
+      throw std::invalid_argument("Connected: Nodi non esistenti, c'è un errore di logica");
       std::cout << "bad Nodes";
       return false;
     }
@@ -566,19 +641,22 @@ public:
     return false;
   }
   
+/**
+    @brief Metodo per stampare il grafo inizialmente,
+    sono solo sicuro che posso stampare la  matrice di adiacenza
 
+  */
   void print() const{
           if (_size == 0)
             std::cout << "Empty Graph" << std::endl;
           for (int i = 0; i < _size; ++i) {
-              std::cout << "Vertex " << getVertexName(i) << ": ";
+              //std::cout << "Vertex " << getVertexName(i) << ": ";
               for (int j = 0; j < _size; ++j) {
                   std::cout << _adjacencyMatrix[i][j] << " ";
               }
               std::cout << std::endl;
           }
       }
-
   size_type getSize() const{
     return _size;
   }
