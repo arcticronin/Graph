@@ -56,12 +56,11 @@ auto test_string() -> int{
   graph.add_Arc("A", "B");
   graph.add_Arc("B", "C");
 
-  std::cout << "Node A exists: " << graph.exists("A") << std::endl;
-  std::cout << "Node D exists: " << graph.exists("D") << std::endl;
-  std::cout << "Nodes B and C are connected: " 
-    << graph.connected("B", "C") << std::endl;
-
-  std::cout << "graph for test_string:"<< std::endl ;//<< graph << std::endl;
+  assert(graph.exists("A"));
+  assert(!graph.exists("D"));
+  
+  graph.connected("B", "C");
+  std::cout << "graph for test_string:"<< std::endl; //<< graph << std::endl;
   graph.print();
   return 0;
 }
@@ -125,7 +124,7 @@ auto test_persona() -> int{
   assert(graph.connected(person2, person3));
   
   // Print the matrix for this graph
-  std::cout << "graph for test_persona";//<< graph << std::endl;
+  std::cout << "graph for test_persona"; //<< graph << std::endl;
   graph.print();
 
   // Test the const forward iterator
