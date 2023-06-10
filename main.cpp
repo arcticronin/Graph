@@ -6,7 +6,7 @@
 #include <fstream>
 #include "amgraph.h" 
 #include <cassert>   
-#include <functional> // just for fun
+#include <functional> // just for fun (tionals)
 #include <vector>
 
 auto test_int() -> int{
@@ -66,6 +66,7 @@ auto test_string() -> int{
   return 0;
 }
 
+
 struct Persona {
   std::string nome;
   int eta;
@@ -85,14 +86,29 @@ std::ostream& operator<<(std::ostream& os, const Persona& person) {
   return os;
 }
 
+struct uselessy_heavy_data {
+    int* data;
+
+    uselessy_heavy_data() {
+        data = new int[100000];
+    }
+    // fake == operator always false
+    bool operator==(const uselessy_heavy_data other) const {
+      return false;
+  }
+};
+
+
+
+
 auto test_persona() -> int{
   
   Amgraph<Persona> graph;
 
   // Create person objects
-  Persona person1{"Alice", 25};
-  Persona person2{"Bob", 30};
-  Persona person3{"Charlie", 35};
+  Persona person1{"Adalberto", 19};
+  Persona person2{"Susanna", 24};
+  Persona person3{"Charlie", 21};
 
   // Add nodes
   graph.add_Node(person1);
@@ -104,13 +120,14 @@ auto test_persona() -> int{
   graph.add_Arc(person2, person3);
 
   // Check if nodes and arcs exist
-  std::cout << "Node person1 exists: " << graph.exists(person1) << std::endl;
-  std::cout << "Node person4 exists: " << graph.exists(Persona{"Dave", 40}) << std::endl;
-  std::cout << "Nodes person2 and person3 are connected: " << graph.connected(person2, person3) << std::endl;
-
-  // Print the graph
+  assert(graph.exists(person1));
+  assert(!graph.exists(Persona{"Dave", 40}));
+  assert(graph.connected(person2, person3));
+  
+  // Print the matrix for this graph
   std::cout << "graph for test_persona";//<< graph << std::endl;
   graph.print();
+
   // Test the const forward iterator
   std::cout << "Iterating over the Graph using a const forward iterator:" << std::endl;
   for (const auto& person : graph) {
@@ -152,12 +169,10 @@ int test_3() {
   //for (; it!=ite; ++it){
   //  std::cout<< *it << std::endl;
   //}
-  
-
   return 0;
 }
 
-void test_memory_limit (int max_nodes){
+void stress_test1 (int max_nodes){
     Amgraph<int> graph;
     for (int i = 1; i <= max_nodes; ++i) {
         graph.add_Node(i);
@@ -168,11 +183,11 @@ void test_memory_limit (int max_nodes){
     std::cout << std::endl;
 }
 
-void test_memory_limit_2(int max_nodes) {
+void stress_test2(int max_nodes) {
     Amgraph<std::vector<int>> graph; 
     for (int i = 1; i <= max_nodes; ++i) {
         std::vector<int> node_vector;
-        for (int j = 1; j <= 100000; ++j) {
+        for (int j = 1; j <= 1000; ++j) {
             node_vector.push_back(i * j); 
             //riempi i vettori, dovranno essere diversi
         }
@@ -184,6 +199,18 @@ void test_memory_limit_2(int max_nodes) {
     }
     std::cout << std::endl;
 }
+
+void stress_test3 (int max_nodes){
+    Amgraph<uselessy_heavy_data> graph;
+    for (int i = 1; i <= max_nodes; ++i) {
+        graph.add_Node(uselessy_heavy_data());
+        std::cout << "Trying: " << i << "/" << max_nodes << " (" << (i * 100 / max_nodes) << "%)";
+        std::cout.flush();
+        std::cout << "\r";
+    }
+    std::cout << std::endl;
+}
+
 
 // empty implementation of the output stream for cstructure to test
 // std::ostream& operator<<(std::ostream& os, const std::vector<int> obj) {
@@ -206,9 +233,10 @@ int main(int argc, char *argv[]){
     testFunction.first();
   }
 
-  // breaking test
-  test_memory_limit(1000);
-  //test_memory_limit_2(1000);
+  // stress_tests
+  stress_test1(1000);
+  stress_test2(1000);
+  stress_test3(1000);
 
   std::cout << "All test were successful" << std::endl;
   return 0;

@@ -544,8 +544,6 @@ public:
     int index2 = this->getVertexIndex(node2);
     if (index1 == -1 || index2 == -1){
       throw std::invalid_argument("Connected: Nodi non esistenti, c'è un errore di logica");
-      std::cout << "Bad Nodes";
-      return;
     } 
     if (this->hasEdge(index1,index2)){
       std::cout << "Already Linked";
@@ -568,6 +566,7 @@ public:
     
     @param node1 una regreference a un nome di un nodo di tipo value_type
     @param node2 una regreference a un nome di un nodo di tipo value_type
+
 
 */
   void remove_Arc(const value_type &node1, const value_type &node2){
@@ -597,23 +596,61 @@ public:
     }
 
   private:
-  
+  /**
+   @brief Aggiunge un arco tra due indici
+
+    @param src indice source
+    @param desr indice destinazione
+
+    @post _adjacenceMatrix[src][dest] == true;
+    */
+
   void addEdge(int src, int dest) {
       _adjacencyMatrix[src][dest] = true;
   }
 
+  /**
+   @brief Rimuove un arco tra due indici
+
+    @param src indice source
+    @param desr indice destinazione
+
+    @post _adjacenceMatrix[src][dest] == false;
+    */
   void removeEdge(int src, int dest) {
       _adjacencyMatrix[src][dest] = false;
   }
+  
+  /**
+   @brief const function: check arco tra due indici
 
+    @param src indice source
+    @param desr indice destinazione
+
+    */
   bool hasEdge(int src, int dest) const{
       return _adjacencyMatrix[src][dest];
   }
+  /**
+   @brief getVertexName
 
-  T getVertexName(int vert) const{
-      return _vertices[vert];
+    ritorna nodo di tipo T indice dall'array dei nodi.
+    @param index indice
+    
+    */
+  T getVertexName(int index) const{
+      return _vertices[index];
   }
+  /**
+   @brief getVertexIndex: Cerca Nodo 
+    
+    Dato un identificativo di un nodo restutisce l'indice al quale quel nodo appare nel vettore _vertices
 
+    @param node riferimento costante a value_type
+
+    @returns -1 se non trovato
+
+    */
   int getVertexIndex(const value_type &node) const{
     for(int i = 0; i < _size; ++i)
       if (node == _vertices[i])
@@ -622,18 +659,44 @@ public:
   }
 
   public:
+    /**
+    @brief exists 
+    
+    Dato un identificativo di un nodo restituisce se è presente nell'array.
+
+    @see getVertexIndex
+    
+    @param node riferimento costante a value_type
+
+    @returns false se non trovato
+  */
 
   bool exists(const value_type &node) const{
     return (this->getVertexIndex(node) != -1);
   }
+   /**
+    @brief connected 
+    
+    Dato due identificativi di un nodo restituisce se è presente un collegamento diretto tra i due:
+
+    Trova gli indici dei nodi e si affida a funzioni private:
+
+    @see getVertexIndex
+    @see hasEdge
+    
+    @param node1 riferimento costante a value_type
+    @param node2 riferimento costante a value_type
+
+    @returns false se non trovato
+  */
+
+
 
   bool connected(const value_type &node1, const value_type &node2) const{
     int index1 = this->getVertexIndex(node1);
     int index2 = this->getVertexIndex(node2);
     if (index1 == -1 || index2 == -1){
       throw std::invalid_argument("Connected: Nodi non esistenti, c'è un errore di logica");
-      std::cout << "bad Nodes";
-      return false;
     }
     if  (this->hasEdge(index1,index2)||
         (this->hasEdge(index2,index1)))
