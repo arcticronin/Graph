@@ -47,7 +47,8 @@ public:
     @post _size = 0
     @post _adjacencyMatrix = nullptr
   */
-  Amgraph() : _vertices(nullptr), _size(0), _adjacencyMatrix(nullptr) { // Initialization list
+  Amgraph() : _vertices(nullptr), _size(0), _adjacencyMatrix(nullptr) { 
+    // Initialization list
  
   
   #ifndef NDEBUG
@@ -64,14 +65,14 @@ public:
   */
 
   ~Amgraph()  {
+  delete[] _vertices;
   for (int i = 0; i < _size; ++i) {
             delete[] _adjacencyMatrix[i];
         }
   delete[] _adjacencyMatrix;
-  delete[] _vertices;
-  _adjacencyMatrix = nullptr;
-  _vertices = nullptr;
-  _size = 0;
+  // _adjacencyMatrix = nullptr;
+  // _vertices = nullptr;
+  // _size = 0;
 
   #ifndef NDEBUG
   std::cout << "Amgraph::~Amgraph()"<< std::endl;
@@ -90,7 +91,8 @@ public:
     @post _size = other._size
     @post _adjacencyMatrix != nullptr
   */
-  Amgraph(const Amgraph &other) : _vertices(nullptr), _size(0), _adjacencyMatrix(nullptr) {
+  Amgraph(const Amgraph &other) : _vertices(nullptr), _size(0), 
+  _adjacencyMatrix(nullptr) {
 
   
   _vertices = new value_type[other._size];
@@ -410,18 +412,21 @@ public:
             }
             delete[] new_adjacencyMatrix;
         }
+        delete[] new_vertices;
         throw;
     }
 
     // clean temp data
     std::swap(_vertices, new_vertices);
+
     delete[] new_vertices;
+    
     std::swap(_adjacencyMatrix, new_adjacencyMatrix);
     for (int i = 0; i < _size; ++i) {
-          delete[] new_adjacencyMatrix[i];
-      }
+        delete[] new_adjacencyMatrix[i];
+     }
     delete[] new_adjacencyMatrix;
-    
+
     _size += 1;
     }
 /**

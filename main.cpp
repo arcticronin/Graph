@@ -85,24 +85,6 @@ std::ostream& operator<<(std::ostream& os, const Persona& person) {
   return os;
 }
 
-struct uselessy_heavy_data {
-    int* data;
-
-    uselessy_heavy_data() {
-        data = new int[10];
-    }
-    ~uselessy_heavy_data() {
-        delete[] data;
-    }
-    // fake == operator always false
-    bool operator==(const uselessy_heavy_data other) const {
-      return false;
-  }
-};
-
-
-
-
 auto test_persona() -> int{
   
   Amgraph<Persona> graph;
@@ -202,10 +184,11 @@ void stress_test2(int max_nodes) {
     std::cout << std::endl;
 }
 
-void stress_test3 (int max_nodes){
-    Amgraph<uselessy_heavy_data> graph;
+template <typename T>
+void stress_test3(int max_nodes){
+    Amgraph<T> graph;
     for (int i = 1; i <= max_nodes; ++i) {
-        graph.add_Node(uselessy_heavy_data());
+        graph.add_Node(T());
         std::cout << "Trying: " << i << "/" << max_nodes << " (" << (i * 100 / max_nodes) << "%)";
         std::cout.flush();
         std::cout << "\r";
@@ -219,9 +202,25 @@ void stress_test3 (int max_nodes){
 //     return os;
 // }
 
+struct Useless_data{
+  int* cose;
+  Useless_data(){
+    cose = new int[1];
+    cose[0] = 1;
+  };
+  bool operator ==(const Useless_data& d) const{
+    return false;
+  };
+  bool operator= (const Useless_data& other){
+    cose[0] = *other.cose;
+    return this;
+  };
+  ~Useless_data(){
+    delete[] cose;
+  }
+};
 
 int main(int argc, char *argv[]){
-  
   
   std::vector<std::pair<std::function<void()>, std::string>> testFunctions = {
     {test_int, "test con graph<int"},
@@ -235,11 +234,10 @@ int main(int argc, char *argv[]){
     testFunction.first();
   }
 
-  // stress_tests
-  stress_test1(1);
-  stress_test2(1);
-  //stress_test3(1);
-  uselessy_heavy_data i[100];
+  //stress_tests
+  stress_test1(10);
+  stress_test2(10);
+  stress_test3<Useless_data>(10);
   std::cout << "All test were successful" << std::endl;
   return 0;
 }
