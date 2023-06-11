@@ -235,9 +235,9 @@ int main(int argc, char *argv[]){
   }
 
   //stress_tests
-  stress_test1(10);
-  stress_test2(10);
-  stress_test3<Useless_data>(10);
+  stress_test1(1000);
+  stress_test2(1000);
+  stress_test3<Useless_data>(1000);
   std::cout << "All test were successful" << std::endl;
   return 0;
 }
