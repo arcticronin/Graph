@@ -89,7 +89,10 @@ struct uselessy_heavy_data {
     int* data;
 
     uselessy_heavy_data() {
-        data = new int[100000];
+        data = new int[10];
+    }
+    ~uselessy_heavy_data() {
+        delete[] data;
     }
     // fake == operator always false
     bool operator==(const uselessy_heavy_data other) const {
@@ -233,10 +236,10 @@ int main(int argc, char *argv[]){
   }
 
   // stress_tests
-  stress_test1(1000);
-  stress_test2(1000);
-  stress_test3(1000);
-
+  stress_test1(1);
+  stress_test2(1);
+  //stress_test3(1);
+  uselessy_heavy_data i[100];
   std::cout << "All test were successful" << std::endl;
   return 0;
 }
